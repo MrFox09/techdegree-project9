@@ -2,8 +2,12 @@
 
 // load modules
 const express = require('express');
+const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const db = require('./models/index');
+const routes = require('./routes');
+const course = require('./routes/course');
+const user = require('./routes/user');
 
 // variable to enable global error logging
 const enableGlobalErrorLogging = process.env.ENABLE_GLOBAL_ERROR_LOGGING === 'true';
@@ -14,9 +18,12 @@ const app = express();
 // setup morgan which gives us http request logging
 app.use(morgan('dev'));
 
-// TODO setup your api routes here
+// make sure that the res object is converted from json and accessable
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-
+// the app can use the routes we require
+app.use('/api',routes,course,user);
 
 
 // setup a friendly greeting for the root route
