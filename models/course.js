@@ -41,7 +41,7 @@ module.exports = (sequelize) => {
 
     Course.associate = (models) => {
 
-        Course.hasMany(models.User);
+        Course.belongsTo(models.User);
     };
  
     return Course;

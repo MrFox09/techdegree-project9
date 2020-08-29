@@ -33,28 +33,27 @@ const authenticateUser = asyncHandler(async (req, res, next) => {
       // from the Authorization header).
 
       // Search the user in the DB  
-      const user = await User.findAll({
+      const user = await User.findOne({
           where: {
             emailAddress: credentials.name
           }
-      });
-
-      
+      });      
      
   
       // If a user was successfully retrieved from the data store...
       if (user) {
-        // Use the bcryptjs npm package to compare the user's password
-        // (from the Authorization header) to the user's password
-        // that was retrieved from the data store.
+
+        //compare the passwords
+
         const authenticated = bcryptjs
           .compareSync(credentials.pass, user.password);
   
         // If the passwords match...
         if (authenticated) {
-          console.log(`Authentication successful for username: ${credentials.name}`);
+          console.log(`Authentication successful for username: ${user.firstName} ${user.lastName}`);
+          
   
-          // Then store the retrieved user object on the request object
+          // Store the retrieved user object on the request object
           // so any middleware functions that follow this middleware function
           // will have access to the user's information.
           req.currentUser = user;
@@ -71,9 +70,10 @@ const authenticateUser = asyncHandler(async (req, res, next) => {
     // If user authentication failed...
     if (message) {
       console.warn(message);
+      
   
       // Return a response with a 401 Unauthorized HTTP status code.
-      res.status(401).json({ message: 'Access Denied' });
+      res.status(401).json({ message: 'Access Denied' , errorMessage: message });
     } else {
       // Or if user authentication succeeded...
       // Call the next() method.
@@ -94,8 +94,10 @@ const authenticateUser = asyncHandler(async (req, res, next) => {
     const user = req.currentUser;
 
     res.json({
+      id: user.id,
       firstName: user.firstName,
-      lastName: user.lastName
+      lastName: user.lastName,
+      emailAddress: user.emailAddress
     });
   
   });
@@ -130,3 +132,4 @@ const authenticateUser = asyncHandler(async (req, res, next) => {
 
 
   module.exports = router;
+  exports.authenticateUser = authenticateUser;
