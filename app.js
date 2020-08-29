@@ -23,15 +23,11 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // the app can use the routes we require
-app.use('/api',routes,course,user);
+app.use('/', routes,course,user);
 
 
-// setup a friendly greeting for the root route
-app.get('/', (req, res) => {
-  res.json({
-    message: 'Welcome to the REST API project!',
-  });
-});
+
+
 
 // send 404 if no other route matched
 app.use((req, res) => {

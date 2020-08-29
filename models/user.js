@@ -19,7 +19,7 @@ module.exports = (sequelize) => {
             type:Sequelize.STRING,
         },
 
-        emailAdress:{
+        emailAddress:{
             type:Sequelize.STRING,
         },
 
@@ -34,7 +34,7 @@ module.exports = (sequelize) => {
 
     User.associate = (models) => {
 
-        User.belongsTo(models.course);
+        User.belongsTo(models.Course);
     };
  
     return User;
