@@ -102,7 +102,7 @@ const authenticateUser = asyncHandler(async (req, res, next) => {
   
   });
 
-    // get and return the current User
+    //Creates a user, sets the Location header to "/" and returns no content
 
     router.post('/api/users', asyncHandler( async (req,res) => {
 
