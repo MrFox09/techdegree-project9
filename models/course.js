@@ -16,25 +16,35 @@ module.exports = (sequelize) => {
 
         title:{
             type:Sequelize.STRING,
+            allowNull:false,
+            validate: {notEmpty:true}
         },
 
         description:{
             type:Sequelize.TEXT,
+            allowNull:false,
+            validate: {notEmpty:true}
         },
 
         estimatedTime:{
             type:Sequelize.STRING,
-            allowNull:true
+            allowNull:true,
+            validate: {notEmpty:true}
+            
         },
 
         materialsNeeded:{
             type:Sequelize.STRING,
-            allowNull:true
+            allowNull:true,
+            validate: {notEmpty:true}
         },
 
 
 
     }, {sequelize});
+
+
+    //Define the asscociation with the User model
 
     Course.associate = (models) => {
 
@@ -42,7 +52,8 @@ module.exports = (sequelize) => {
             {
                 as: 'owner', 
                 foreignKey: {
-                    fieldName: 'userId',                    
+                    fieldName: 'userId',  
+                    allowNull: false                  
                 }     
                     
         

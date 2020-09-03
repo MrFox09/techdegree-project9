@@ -1,4 +1,5 @@
 const Sequelize = require('sequelize');
+
  
 module.exports = (sequelize) => {
  
@@ -13,32 +14,42 @@ module.exports = (sequelize) => {
 
         firstName:{
             type:Sequelize.STRING,
+            allowNull:false,
+            validate: {notEmpty:true}
         },
 
         lastName:{
             type:Sequelize.STRING,
+            allowNull:false,
+            validate: {notEmpty:true}
         },
 
         emailAddress:{
             type:Sequelize.STRING,
+            allowNull:false,
+            validate: {notEmpty:true}
         },
 
         password:{
             type:Sequelize.STRING,
+            allowNull:false,
+            validate: {notEmpty:true}
+        
         }
 
 
 
     }, {sequelize});
 
-
+    //Define the asscociation with the Course model
     User.associate = (models) => {
 
         User.hasMany(models.Course,
             {
                 as: 'owner', 
                 foreignKey: {
-                    fieldName: 'userId',                    
+                    fieldName: 'userId', 
+                    allowNull:false                   
                 }     
                     
         
