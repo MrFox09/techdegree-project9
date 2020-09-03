@@ -21,7 +21,7 @@ function asyncHandler(cb){
 
 //returns a list of courses(including the user that owns each course)
 
-router.get('/api/courses', authenticateUser, asyncHandler( async (req,res) => {
+router.get('/api/courses', asyncHandler( async (req,res,next) => {
 
   const courses = await Course.findAll({
     attributes: ['id','title','description', 'estimatedTime', 'materialsNeeded'],
@@ -34,7 +34,7 @@ router.get('/api/courses', authenticateUser, asyncHandler( async (req,res) => {
     ]
   });
 
-  if (course) {
+  if (courses) {
     res.json(courses);  
     
   } else {
@@ -47,7 +47,7 @@ router.get('/api/courses', authenticateUser, asyncHandler( async (req,res) => {
 
 //Returns the course (including the user that owns the course)
 
-router.get('/api/courses/:id', authenticateUser, asyncHandler( async (req,res) => {
+router.get('/api/courses/:id', asyncHandler( async (req,res,next) => {
 
   const course = await Course.findOne({
     attributes: ['id','title','description', 'estimatedTime', 'materialsNeeded'],
@@ -69,7 +69,9 @@ router.get('/api/courses/:id', authenticateUser, asyncHandler( async (req,res) =
     res.json(course);
     
   } else {
+    console.log('error');
     const err = new Error ();
+    err.message = "Course not found";
     next(err);
     
   }    
@@ -98,7 +100,7 @@ router.post('/api/courses',authenticateUser, asyncHandler( async (req,res) => {
     
   } catch (error) {
     if(error.name === "SequelizeValidationError") {      
-      res.status(400);           
+      res.status(400).json(error);           
     } else {
       throw error;
     }
@@ -109,22 +111,27 @@ router.post('/api/courses',authenticateUser, asyncHandler( async (req,res) => {
 
 // Updates a course and returns no content
 
-router.put('/api/courses/:id', authenticateUser, asyncHandler( async (req,res) => {
-
+router.put('/api/courses/:id', authenticateUser, asyncHandler( async (req,res,next) => {
+  //save the current Users id (from the authenticateUser Method)
+  currentUser = req.currentUser.id;
   let course;
   try {
     course = await Course.findByPk(req.params.id);
+    
 
-    if(course) {
+    if(course && currentUser === course.userId) {
       await course.update(req.body);
       res.status(204).end(); 
     } else {
       const err = new Error ();
+      err.status = 403;
+      res.status(403);
+      err.message = 'Can not update! You do not own the course';
       next(err);
     }
   } catch (error) {
     if(error.name === "SequelizeValidationError") {      
-      res.status(400);           
+      res.status(400).json(error);           
     } else {
       throw error;
     }
@@ -133,7 +140,7 @@ router.put('/api/courses/:id', authenticateUser, asyncHandler( async (req,res) =
 
 // Deletes a course and returns no content
 
-router.delete('/api/courses/:id', authenticateUser, asyncHandler( async (req,res) => {
+router.delete('/api/courses/:id', authenticateUser, asyncHandler( async (req,res,next) => {
 
   const course = await Course.findByPk(req.params.id);
 
@@ -142,6 +149,7 @@ router.delete('/api/courses/:id', authenticateUser, asyncHandler( async (req,res
     res.status(204).end();
   }else {
     const err = new Error ();
+    err.message = "Can't delete, course doesn't exist";
     next(err);
     
   }

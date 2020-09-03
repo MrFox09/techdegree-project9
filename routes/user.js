@@ -56,12 +56,12 @@ function asyncHandler(cb){
         });
 
         res.location('/');
-        res.status(201);
+        res.status(201).end();
         
       } catch (error) {
 
         if(error.name === "SequelizeValidationError") {      
-          res.status(400);           
+          res.status(400).json(error);           
         } else {
           throw error;
         }
