@@ -15,6 +15,7 @@ Start the app:
 
 In the Terminal:
 + type npm install to install all dependencies
++ type npm run seed to initialize the Database
 + type npm start
 + the app is available on localhost:5000 (there could be a different port, more information in the console)
 + test the routes with Postman 
