@@ -142,15 +142,28 @@ router.put('/api/courses/:id', authenticateUser, asyncHandler( async (req,res,ne
 
 router.delete('/api/courses/:id', authenticateUser, asyncHandler( async (req,res,next) => {
 
+  //save the current Users id (from the authenticateUser Method)
+  currentUser = req.currentUser.id;
+
   const course = await Course.findByPk(req.params.id);
 
-  if(course){
+  if(course && currentUser === course.userId){
     await course.destroy();
     res.status(204).end();
   }else {
-    const err = new Error ();
-    err.message = "Can't delete, course doesn't exist";
-    next(err);
+    if (!course) {
+      const err = new Error ();
+      err.message = "Can't delete, course don't exists";
+      next(err);
+      
+    } else {
+
+      const err = new Error ();
+      err.message = "You don't have the permission to delete this course";
+      next(err);
+      
+    }
+  
     
   }
 

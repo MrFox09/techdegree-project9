@@ -45,6 +45,26 @@ app.use((err, req, res, next) => {
   });
 });
 
+// async IIFE check the Database Connection
+ 
+(async ()=>{
+ 
+  try {
+
+      await db.sequelize.authenticate();
+      console.log('Connection to database succesfull!');
+  }
+
+  catch(error) {
+
+      console.log('Error connecting to the database: ', error);
+  }
+
+
+
+})();
+
+
 // set our port
 let port = app.set('port', process.env.PORT || 5000);
 
