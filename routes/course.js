@@ -159,6 +159,8 @@ router.delete('/api/courses/:id', authenticateUser, asyncHandler( async (req,res
     } else {
 
       const err = new Error ();
+      err.status = 403;
+      res.status(403);
       err.message = "You don't have the permission to delete this course";
       next(err);
       

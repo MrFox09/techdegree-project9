@@ -42,16 +42,19 @@ function asyncHandler(cb){
 
       req.body.password = bcryptjs.hashSync(req.body.password);
 
+     
       try {
 
         //create a new User in the User-DB
 
-        await User.create({
+        const newUser = await User.create({
 
           firstName: req.body.firstName,
           lastName: req.body.lastName,
           emailAddress: req.body.emailAddress,
-          password: req.body.password
+          password: req.body.password 
+
+         
         
         });
 
@@ -59,14 +62,13 @@ function asyncHandler(cb){
         res.status(201).end();
         
       } catch (error) {
-
         if(error.name === "SequelizeValidationError") {      
           res.status(400).json(error);           
         } else {
           throw error;
         }
         
-      }      
+      } 
   
       
     }));
