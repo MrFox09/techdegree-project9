@@ -15,6 +15,16 @@ function asyncHandler(cb){
       }
     };
   }
+
+// Helper Function which will check if an object is empty returns true if it is or false if not
+
+const isEmpty = (obj) => {
+  for(var key in obj) {
+      if(obj.hasOwnProperty(key))
+          return false;
+  }
+  return true;
+};
   
   // get and return the current User
 
@@ -36,28 +46,43 @@ function asyncHandler(cb){
 
     //Creates a user, sets the Location header to "/" and returns no content
 
-    router.post('/api/users', asyncHandler( async (req,res) => {
+    router.post('/api/users', asyncHandler( async (req,res,next) => {
 
-      //hash the user password
-
-      req.body.password = bcryptjs.hashSync(req.body.password);
+     
 
       try {
+        // check the body if it is empty, send a validation error when empty
 
-        //create a new User in the User-DB
+        if (isEmpty(req.body)) {
+          const err = new Error ();
+          err.status = 400;
+          res.status(400);
+          err.message = 'Validation Error, Can not be empty';
+          next(err);
+          
+        } else {
 
-        await User.create({
+           //hash the user password
 
-          firstName: req.body.firstName,
-          lastName: req.body.lastName,
-          emailAddress: req.body.emailAddress,
-          password: req.body.password
-        
-        });
+            req.body.password = bcryptjs.hashSync(req.body.password);
 
-        res.location('/');
-        res.status(201).end();
-        
+           //create a new User in the User-DB
+          await User.create({
+
+            firstName: req.body.firstName,
+            lastName: req.body.lastName,
+            emailAddress: req.body.emailAddress,
+            password: req.body.password
+          
+          });
+  
+          res.location('/');
+          res.status(201).end();
+          
+        }        
+
+
+        // throw an error when enter invalid data
       } catch (error) {
 
         if(error.name === "SequelizeValidationError") {      

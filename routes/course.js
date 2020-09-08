@@ -16,6 +16,17 @@ function asyncHandler(cb){
     };
   }
 
+  // Helper Function which will check if an object is empty returns true if it is or false if not
+
+const isEmpty = (obj) => {
+  for(var key in obj) {
+      if(obj.hasOwnProperty(key))
+          return false;
+  }
+  return true;
+};
+
+
   
 
 
@@ -109,6 +120,8 @@ router.post('/api/courses',authenticateUser, asyncHandler( async (req,res) => {
 
 }));
 
+
+
 // Updates a course and returns no content
 
 router.put('/api/courses/:id', authenticateUser, asyncHandler( async (req,res,next) => {
@@ -119,9 +132,29 @@ router.put('/api/courses/:id', authenticateUser, asyncHandler( async (req,res,ne
     course = await Course.findByPk(req.params.id);
     
 
-    if(course && currentUser === course.userId) {
+    if(course && currentUser === course.userId) {        
+      
+
       await course.update(req.body);
-      res.status(204).end(); 
+
+      // check the body if it is empty, send a validation error when empty
+
+      if (isEmpty(req.body)) {
+        const err = new Error ();
+        err.status = 400;
+        res.status(400);
+        err.message = 'Validation Error, Can not be empty';
+        next(err);
+        
+        
+      } else {      
+
+        res.status(204).end();    
+        
+      }
+
+      //throw an error when you don't own the course
+      
     } else {
       const err = new Error ();
       err.status = 403;
@@ -129,6 +162,8 @@ router.put('/api/courses/:id', authenticateUser, asyncHandler( async (req,res,ne
       err.message = 'Can not update! You do not own the course';
       next(err);
     }
+
+    // throw an error when enter invalid data
   } catch (error) {
     if(error.name === "SequelizeValidationError") {      
       res.status(400).json(error);           
@@ -159,6 +194,8 @@ router.delete('/api/courses/:id', authenticateUser, asyncHandler( async (req,res
     } else {
 
       const err = new Error ();
+      err.status = 403;
+      res.status(403);
       err.message = "You don't have the permission to delete this course";
       next(err);
       
