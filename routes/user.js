@@ -68,7 +68,7 @@ const isEmpty = (obj) => {
             req.body.password = bcryptjs.hashSync(req.body.password);
 
            //create a new User in the User-DB
-          await User.create({
+            await User.create({
 
             firstName: req.body.firstName,
             lastName: req.body.lastName,
