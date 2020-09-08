@@ -50,6 +50,7 @@ const isEmpty = (obj) => {
 
      
 
+     
       try {
         // check the body if it is empty, send a validation error when empty
 
@@ -84,14 +85,13 @@ const isEmpty = (obj) => {
 
         // throw an error when enter invalid data
       } catch (error) {
-
         if(error.name === "SequelizeValidationError") {      
           res.status(400).json(error);           
         } else {
           throw error;
         }
         
-      }      
+      } 
   
       
     }));
